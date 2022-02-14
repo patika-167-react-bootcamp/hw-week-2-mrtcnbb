@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <aside class="left-aside">
+            <div class="member-form-container">
+                <form class="member-form">
+                    <input type="text" id="member-name" placeholder="İsim" required>
+                    <input type="text" id="member-balance" placeholder="Hesaptaki Miktar" required>
+                    <button class="member-button">Ekle</button>
+                </form>
+            </div>
+            <div class="member-list-container">
+                <ul class="member-list">
+                </ul>
+            </div>
+        </aside>
+        <aside class="right-aside">
+            <div class="transaction-form-container">
+                <form class="transaction-form">
+                    <select name="sender" id="sender" required>
+                        <option value="" disabled selected hidden>Gönderen Seçimi</option>
+                    </select>
+                    <select name="recipient" id="recipient" required>
+                        <option value="" disabled selected hidden>Alıcı Seçimi</option>
+                    </select>
+                    <input type="number" name="amount" id="amount" placeholder="Tutar" required>
+                    <button class="history-button">Gönder</button>
+                </form>
+            </div>
+            <div class="history-list-container">
+                <ul class="history-list">
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
