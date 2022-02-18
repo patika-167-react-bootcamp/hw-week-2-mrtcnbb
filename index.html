@@ -38,13 +38,20 @@
                 </form>
             </div>
             <div class="history-list-container">
+                <div class="filter-transactions">
+                    <label for="">Gönderici: <select name="filter-sender" id="filter-sender"></select></label>
+                    <label for="">Alıcı: <select name="filter-recipient" id="filter-recipient"></select></label>
+                    <label for="">Gönderen/Alıcı: <select name="filter-sender-recipient"
+                            id="filter-sender-recipient"></select></label>
+                    <button class="clear-filter">Filtreyi Sil</button>
+                </div>
                 <ul class="history-list">
                 </ul>
             </div>
         </aside>
     </div>
 
-    <script src="app.js" defer></script>
+    <script src="app.js"></script>
 </body>
 
 </html>

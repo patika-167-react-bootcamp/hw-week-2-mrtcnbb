@@ -12,8 +12,24 @@ const transactionForm = document.querySelector('.transaction-form');
 // History Details List Elements
 const historyDetailsList = document.querySelector('.history-list');
 
+// Filter History Elements
+const filterSender = document.querySelector('#filter-sender');
+const filterRecipient = document.querySelector('#filter-recipient');
+const filterSenderRecipient = document.querySelector('#filter-sender-recipient');
+
+// Clear Filter Button
+const clearFilter = document.querySelector('.clear-filter');
+
 // Elements to be rendered and updated on customer add
-const subscribersOnCustomerAdd = [customerList, historyDetailsList, sender, recipient];
+const subscribersOnCustomerAdd = [
+  customerList,
+  historyDetailsList,
+  sender,
+  recipient,
+  filterSender,
+  filterRecipient,
+  filterSenderRecipient,
+];
 
 // State of the App
 const state = {
@@ -57,6 +73,16 @@ function renderRecipientList(list, subscriber) {
   });
 }
 
+function renderFilteredList(list, subscriber) {
+  list.forEach((customer) => {
+    let filteredItem = document.createElement('option');
+    filteredItem.text = customer.name;
+    filteredItem.setAttribute('data-id', customer.id);
+    subscriber.appendChild(filteredItem);
+  });
+}
+
+// Render All Elements on Add and Transaction / Transaction Remove
 function renderListsOnCustomerAddAndMakeTransaction() {
   subscribersOnCustomerAdd.forEach(function (subscriber) {
     subscriber.innerHTML = '';
@@ -68,6 +94,12 @@ function renderListsOnCustomerAddAndMakeTransaction() {
       renderRecipientList(state.customerList, subscriber);
     } else if (subscriber.getAttribute('class') === 'history-list') {
       renderHistoryDetailsList(state.historyDetailsList, subscriber);
+    } else if (subscriber.getAttribute('id') === 'filter-sender') {
+      renderFilteredList(state.customerList, subscriber);
+    } else if (subscriber.getAttribute('id') === 'filter-recipient') {
+      renderFilteredList(state.customerList, subscriber);
+    } else if (subscriber.getAttribute('id') === 'filter-sender-recipient') {
+      renderFilteredList(state.customerList, subscriber);
     }
   });
 }
@@ -184,7 +216,7 @@ transactionForm.addEventListener('submit', (e) => {
   transactionForm.reset();
 });
 
-// onClick event of removeCustomer
+// onClick event of 'customer-delete-button' button on Customer List
 function removeCustomer(e) {
   const customerId = e.target.parentElement.getAttribute('data-id');
   const updatedCustomerList = state.customerList.filter((customer) => {
@@ -195,7 +227,7 @@ function removeCustomer(e) {
   setState('removeCustomer', [...updatedCustomerList]);
 }
 
-// onClick event of removeTransaction
+// onClick event of 'transaction-delete-button' button on History Details List
 function removeTransaction(e) {
   const historyDetailId = Number(e.target.parentElement.getAttribute('data-id'));
   const historyDetailIndex = state.historyDetailsList.findIndex((hisDet) => {
@@ -250,8 +282,54 @@ function removeTransaction(e) {
   }
 }
 
+filterSender.addEventListener('change', () => {
+  let senderId = filterSender.options[filterSender.selectedIndex].getAttribute('data-id');
+  let copyHistoryDetails = [...state.historyDetailsList];
+  let filteredSenderArray = [];
+  copyHistoryDetails.forEach((historyDetail) => {
+    console.log('history: ', historyDetail);
+    if (Number(historyDetail.sender?.id) === Number(senderId)) {
+      filteredSenderArray.push(historyDetail);
+    }
+  });
+  renderHistoryDetailsList(filteredSenderArray, historyDetailsList);
+});
+
+filterRecipient.addEventListener('change', () => {
+  let recipientId = filterRecipient.options[filterRecipient.selectedIndex].getAttribute('data-id');
+  let copyHistoryDetails = [...state.historyDetailsList];
+  let filteredRecipientArray = [];
+  copyHistoryDetails.forEach((historyDetail) => {
+    console.log('history: ', historyDetail);
+    if (Number(historyDetail.recipient?.id) === Number(recipientId)) {
+      filteredRecipientArray.push(historyDetail);
+    }
+  });
+  renderHistoryDetailsList(filteredRecipientArray, historyDetailsList);
+});
+
+filterSenderRecipient.addEventListener('change', () => {
+  let senderRecipientId = filterSenderRecipient.options[filterSenderRecipient.selectedIndex].getAttribute('data-id');
+  let copyHistoryDetails = [...state.historyDetailsList];
+  let filteredCustomersArray = [];
+  copyHistoryDetails.forEach((historyDetail) => {
+    if (Number(historyDetail.sender?.id) === Number(senderRecipientId)) {
+      filteredCustomersArray.push(historyDetail);
+    } else if (Number(historyDetail.recipient?.id) === Number(senderRecipientId)) {
+      filteredCustomersArray.push(historyDetail);
+    }
+  });
+  renderHistoryDetailsList(filteredCustomersArray, historyDetailsList);
+});
+
+// Bring All the History Details
+clearFilter.addEventListener('click', () => {
+  renderHistoryDetailsList(state.historyDetailsList, historyDetailsList);
+});
+
 // Element generators according to the operation type for History Details List
 function renderHistoryDetailsList(list, subscriber) {
+  subscriber.innerHTML = '';
   list.forEach((historyDetail) => {
     if (historyDetail.operation === 'addCustomer') {
       const newHistoryDetailLi = document.createElement('li');
@@ -308,9 +386,4 @@ function updatedCustomer(list, customerId) {
   });
   const newCustomer = list[newCustomerIndex];
   return newCustomer;
-}
-
-function filterHistoryDetailsList(inputSender, inRec) {
-  const hisDets = [...state.historyDetailsList];
-  const renderList = hisDets.filter((customer) => {});
 }
